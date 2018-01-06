@@ -1,13 +1,21 @@
 {
   "name": "ehs-serpent",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "version": "0.1.0",
+  "description": "HTML5 Snake Game",
+  "main": "dist/index.js",
   "scripts": {
     "start": "./node_modules/parcel-bundler/bin/cli.js index.html --no-cache"
   },
-  "author": "Elder Henrique Souza",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com:elderhsouza/serpent.git"
+  },
+  "author": "Elder Henrique Souza <elderhenrique@gmail.com> @elderhsouza",
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elderhsouza/serpent/issues"
+  },
+  "homepage": "https://github.com/elderhsouza/serpent#readme",
   "devDependencies": {
     "latest-createjs": "^1.0.24",
     "lodash": "^4.17.4",
