@@ -1,4 +1,3 @@
-
 'use strict';
 
 import _ from 'lodash';
@@ -19,13 +18,6 @@ export default {
       .f('green')
       .drawCircle(10, 10, tileSize >> 1);
 
-    const foodLocation = pickFoodLocation();
-    food.x = foodLocation.x;
-    food.y = foodLocation.y;
-
-    stage.addChild(food);
-
-
     // snake
     const snake = new createjs.Shape();
     snake.x = 20;
@@ -43,25 +35,25 @@ export default {
       .dr(0, 0, tileSize, tileSize);
     snake.cache(0, 0, tileSize, tileSize);
 
-    stage.addChild(snake);
+    // food location
+    const foodLocation = pickFoodLocation();
+    food.x = foodLocation.x;
+    food.y = foodLocation.y;
 
+    stage.addChild(food);
+    stage.addChild(snake);
 
     function onStageTick(event) {
       let x = snake.x + (snake.xspeed * tileSize);
       let y = snake.y + (snake.yspeed * tileSize);
 
       if (x <= 0 || x >= stageWidth || y <= 0 || y >= stageHeight) {
-        console.log('wall');
-        // createjs.Ticker.reset();
         createjs.Ticker.removeEventListener('tick', onStageTick);
         return;
       }
 
       for (let i = 0; i < snake.tail.length; i++) {
-        // console.log(`part #${i}`);
-        // console.log(snake.x, snake.y, snake.tail[i].x, snake.tail[i].y);
         if (x === snake.tail[i].x && y === snake.tail[i].y) {
-          // createjs.Ticker.reset();
           createjs.Ticker.removeEventListener('tick', onStageTick);
           return;
         }
@@ -89,13 +81,6 @@ export default {
 
       snake.x = _.clamp(snake.x, 0, stageWidth - tileSize);
       snake.y = _.clamp(snake.y, 0, stageHeight - tileSize);
-
-      // let hasIntersected = snake.parts
-      //   .reduce(part => (snake.x === part.x && snake.y === part.y), false);
-      // if (hasIntersected) {
-      //   console.log('intersected');
-      // }
-
 
       stage.update();
     }
@@ -156,15 +141,18 @@ export default {
       let foodLocation = pickFoodLocation();
       food.x = foodLocation.x;
       food.y = foodLocation.y;
-
-      console.log(score);
     }
 
     function pickFoodLocation() {
-      return {
-        x: tileSize * _.random(0, stageWidth / tileSize - 1),
-        y: tileSize * _.random(0, stageHeight / tileSize - 1),
-      }
+      const filledLocations = [{x: snake.x, y: snake.y}, ...snake.tail];
+
+      let x, y;
+      do {
+        x = tileSize * _.random(0, stageWidth / tileSize - 1);
+        y = tileSize * _.random(0, stageHeight / tileSize - 1);
+      } while (filledLocations.findIndex(point => point.x === x && point.y === y) !== -1);
+
+      return { x, y };
     }
 
     document.addEventListener('click', onClick.bind(this));
