@@ -15,86 +15,61 @@ function onTickUpdate(event) {
 
 export default {
 
-  init(canvas) {
+  init() {
+
+    console.log(stage, snake);
 
     stage.addChild(food);
     stage.addChild(snake);
 
+    createjs.Ticker.framerate = 12;
+
     function onStageTick(event) {
-      let x = snake.x + (snake.xspeed * TILE_SIZE);
-      let y = snake.y + (snake.yspeed * TILE_SIZE);
+      // let x = snake.x + (snake.xspeed * TILE_SIZE);
+      // let y = snake.y + (snake.yspeed * TILE_SIZE);
 
-      if (x <= 0 || x >= STAGE_WIDTH || y <= 0 || y >= STAGE_HEIGHT) {
-        createjs.Ticker.removeEventListener('tick', onStageTick);
-        return;
-      }
+      // if (x <= 0 || x >= STAGE_WIDTH || y <= 0 || y >= STAGE_HEIGHT) {
+      //   createjs.Ticker.removeEventListener('tick', onStageTick);
+      //   return;
+      // }
 
-      for (let i = 0; i < snake.tail.length; i++) {
-        if (x === snake.tail[i].x && y === snake.tail[i].y) {
-          createjs.Ticker.removeEventListener('tick', onStageTick);
-          return;
-        }
-      }
+      // for (let i = 0; i < snake.tail.length; i++) {
+      //   if (x === snake.tail[i].x && y === snake.tail[i].y) {
+      //     createjs.Ticker.removeEventListener('tick', onStageTick);
+      //     return;
+      //   }
+      // }
 
-      if (Math.hypot(x - food.x, y - food.y) < 10) {
-        foodEaten();
-      }
+      // if (Math.hypot(x - food.x, y - food.y) < 10) {
+      //   foodEaten();
+      // }
 
-      for (let i = 0; i < snake.tail.length - 1; i++) {
-        snake.tail[i] = snake.tail[i + 1];
-      }
-      if (snake.length >= 1) {
-        snake.tail[snake.length - 1] = {x: snake.x, y: snake.y};
-      }
+      // for (let i = 0; i < snake.tail.length - 1; i++) {
+      //   snake.tail[i] = snake.tail[i + 1];
+      // }
+      // if (snake.length >= 1) {
+      //   snake.tail[snake.length - 1] = {x: snake.x, y: snake.y};
+      // }
 
-      for (let i = 0; i < snake.tail.length; i++) {
-        snake.parts[i].x = snake.tail[i].x;
-        snake.parts[i].y = snake.tail[i].y;
-        stage.addChild(snake.parts[i]);
-      }
+      // for (let i = 0; i < snake.tail.length; i++) {
+      //   snake.parts[i].x = snake.tail[i].x;
+      //   snake.parts[i].y = snake.tail[i].y;
+      //   stage.addChild(snake.parts[i]);
+      // }
 
-      snake.x += snake.xspeed * TILE_SIZE;
-      snake.y += snake.yspeed * TILE_SIZE;
+      // snake.x += snake.xspeed * TILE_SIZE;
+      // snake.y += snake.yspeed * TILE_SIZE;
 
-      snake.x = _.clamp(snake.x, 0, STAGE_WIDTH - TILE_SIZE);
-      snake.y = _.clamp(snake.y, 0, STAGE_HEIGHT - TILE_SIZE);
+      // snake.x = _.clamp(snake.x, 0, STAGE_WIDTH - TILE_SIZE);
+      // snake.y = _.clamp(snake.y, 0, STAGE_HEIGHT - TILE_SIZE);
 
-      stage.update();
+      // stage.update();
     }
     // createjs.Ticker.framerate = 12;
     // createjs.Ticker.addEventListener('tick', onStageTick);
 
     function onKeyDown(event) {
-      switch (event.code) {
-        case 'ArrowDown':
-          if (snake.dir !== 'UP') {
-            snake.dir = 'DOWN';
-            snake.yspeed = 1;
-            snake.xspeed = 0;
-          }
-          break;
-        case 'ArrowUp':
-          if (snake.dir !== 'DOWN') {
-            snake.dir = 'UP';
-            snake.yspeed = -1;
-            snake.xspeed = 0;
-          }
-          break;
-        case 'ArrowRight':
-          if (snake.dir !== 'LEFT') {
-            snake.dir = 'RIGHT';
-            snake.xspeed = 1;
-            snake.yspeed = 0;
-          }
-          break;
-        case 'ArrowLeft':
-          if (snake.dir !== 'RIGHT') {
-            snake.dir = 'LEFT';
-            snake.xspeed = -1;
-            snake.yspeed = 0;
-          }
-          break;
-      }
+
     }
 
     function onClick(event) {
@@ -132,16 +107,20 @@ export default {
 
       return new createjs.Point(x, y);
     }
-
-    // document.addEventListener('click', onClick.bind(this));
-    // document.addEventListener('keydown', onKeyDown.bind(this));
   },
 
   start() {
+    createjs.Ticker.framerate = 12;
     createjs.Ticker.addEventListener('tick', onTickUpdate);
+
+    snake.start();
   },
 
   end() {
     createjs.removeEventListener('tick', onTickUpdate);
+  },
+
+  onTickUpdate(event) {
+    stage.update();
   }
 }

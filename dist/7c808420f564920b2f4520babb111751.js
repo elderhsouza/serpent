@@ -16721,7 +16721,7 @@ window.createjs = window.createjs || {};
 
 })();
 
-},{}],8:[function(require,module,exports) {
+},{}],10:[function(require,module,exports) {
 /*!
 * TweenJS
 * Visit http://createjs.com/ for documentation, updates and examples.
@@ -28620,7 +28620,7 @@ window.createjs = window.createjs || {};
 	createjs.HTMLAudioPlugin = createjs.promote(HTMLAudioPlugin, "AbstractPlugin");
 }());
 
-},{}],10:[function(require,module,exports) {
+},{}],8:[function(require,module,exports) {
 var global = (1,eval)("this");
 /*!
 * PreloadJS
@@ -36523,7 +36523,7 @@ require('./lib/tweenjs/tweenjs.js')
 require('./lib/soundjs/soundjs.js')
 require('./lib/preloadjs/preloadjs.js')
 
-},{"./lib/easeljs/easeljs.js":7,"./lib/tweenjs/tweenjs.js":8,"./lib/soundjs/soundjs.js":9,"./lib/preloadjs/preloadjs.js":10}],13:[function(require,module,exports) {
+},{"./lib/easeljs/easeljs.js":7,"./lib/tweenjs/tweenjs.js":10,"./lib/soundjs/soundjs.js":9,"./lib/preloadjs/preloadjs.js":8}],18:[function(require,module,exports) {
 'use strict'
 
 exports.byteLength = byteLength
@@ -36639,7 +36639,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],14:[function(require,module,exports) {
+},{}],17:[function(require,module,exports) {
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -36725,14 +36725,14 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],15:[function(require,module,exports) {
+},{}],19:[function(require,module,exports) {
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],12:[function(require,module,exports) {
+},{}],16:[function(require,module,exports) {
 
 var global = (1,eval)("this");
 /*!
@@ -38525,7 +38525,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":13,"ieee754":14,"isarray":15,"buffer":12}],11:[function(require,module,exports) {
+},{"base64-js":18,"ieee754":17,"isarray":19,"buffer":16}],15:[function(require,module,exports) {
 var global = (1,eval)("this");
 var Buffer = require("buffer").Buffer;
 /**
@@ -55613,7 +55613,7 @@ var Buffer = require("buffer").Buffer;
   }
 }.call(this));
 
-},{"buffer":12}],18:[function(require,module,exports) {
+},{"buffer":16}],11:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55628,7 +55628,7 @@ exports.TILE_SIZE = TILE_SIZE;
 exports.STAGE_WIDTH = STAGE_WIDTH;
 exports.STAGE_HEIGHT = STAGE_HEIGHT;
 exports.CANVAS_SELECTOR = CANVAS_SELECTOR;
-},{}],19:[function(require,module,exports) {
+},{}],12:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55641,7 +55641,7 @@ const stage = new createjs.Stage(_settings.CANVAS_SELECTOR);
 stage.setBounds(0, 0, _settings.STAGE_WIDTH, _settings.STAGE_HEIGHT);
 
 exports.default = stage;
-},{"./settings.js":18}],17:[function(require,module,exports) {
+},{"./settings.js":11}],13:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55655,28 +55655,76 @@ const food = new createjs.Shape();
 food.graphics.f('green').drawCircle(_settings.TILE_SIZE >> 1, _settings.TILE_SIZE >> 1, _settings.TILE_SIZE, _settings.TILE_SIZE);
 
 exports.default = food;
-},{"./settings.js":18}],16:[function(require,module,exports) {
+},{"./settings.js":11}],14:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _lodash = require("lodash");
+
+var _lodash2 = _interopRequireDefault(_lodash);
+
 var _settings = require("./settings.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 const snake = new createjs.Shape();
 snake.graphics.f('black').dr(0, 0, _settings.TILE_SIZE, _settings.TILE_SIZE);
 
-snake.xspeed = 0;
-snake.yspeed = 0;
-// snake.dir = 'RIGHT';
+exports.default = Object.assign(snake, {
+  xspeed: 0,
+  yspeed: 0,
+  dir: null,
 
-snake.start = function () {
-  console.log('snake start');
-};
+  start() {
+    createjs.Ticker.addEventListener('tick', this.onTickUpdate.bind(this));
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
+  },
 
-exports.default = snake;
-},{"./settings.js":18}],5:[function(require,module,exports) {
+  onTickUpdate(event) {
+    this.x += this.xspeed * _settings.TILE_SIZE;
+    this.y += this.yspeed * _settings.TILE_SIZE;
+
+    this.x = _lodash2.default.clamp(this.x, 0, _settings.STAGE_WIDTH - _settings.TILE_SIZE);
+    this.y = _lodash2.default.clamp(this.y, 0, _settings.STAGE_HEIGHT - _settings.TILE_SIZE);
+  },
+
+  onKeyDown(event) {
+    switch (event.code) {
+      case 'ArrowDown':
+        if (this.dir !== 'UP') {
+          this.dir = 'DOWN';
+          this.yspeed = 1;
+          this.xspeed = 0;
+        }
+        break;
+      case 'ArrowUp':
+        if (this.dir !== 'DOWN') {
+          this.dir = 'UP';
+          this.yspeed = -1;
+          this.xspeed = 0;
+        }
+        break;
+      case 'ArrowRight':
+        if (this.dir !== 'LEFT') {
+          this.dir = 'RIGHT';
+          this.xspeed = 1;
+          this.yspeed = 0;
+        }
+        break;
+      case 'ArrowLeft':
+        if (this.dir !== 'RIGHT') {
+          this.dir = 'LEFT';
+          this.xspeed = -1;
+          this.yspeed = 0;
+        }
+        break;
+    }
+  }
+});
+},{"lodash":15,"./settings.js":11}],5:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55711,87 +55759,60 @@ function onTickUpdate(event) {
 
 exports.default = {
 
-  init(canvas) {
+  init() {
+
+    console.log(_stage2.default, _snake2.default);
 
     _stage2.default.addChild(_food2.default);
     _stage2.default.addChild(_snake2.default);
 
-    function onStageTick(event) {
-      let x = _snake2.default.x + _snake2.default.xspeed * TILE_SIZE;
-      let y = _snake2.default.y + _snake2.default.yspeed * TILE_SIZE;
+    createjs.Ticker.framerate = 12;
 
-      if (x <= 0 || x >= _settings.STAGE_WIDTH || y <= 0 || y >= _settings.STAGE_HEIGHT) {
-        createjs.Ticker.removeEventListener('tick', onStageTick);
-        return;
-      }
+    function onStageTick(event) {}
+    // let x = snake.x + (snake.xspeed * TILE_SIZE);
+    // let y = snake.y + (snake.yspeed * TILE_SIZE);
 
-      for (let i = 0; i < _snake2.default.tail.length; i++) {
-        if (x === _snake2.default.tail[i].x && y === _snake2.default.tail[i].y) {
-          createjs.Ticker.removeEventListener('tick', onStageTick);
-          return;
-        }
-      }
+    // if (x <= 0 || x >= STAGE_WIDTH || y <= 0 || y >= STAGE_HEIGHT) {
+    //   createjs.Ticker.removeEventListener('tick', onStageTick);
+    //   return;
+    // }
 
-      if (Math.hypot(x - _food2.default.x, y - _food2.default.y) < 10) {
-        foodEaten();
-      }
+    // for (let i = 0; i < snake.tail.length; i++) {
+    //   if (x === snake.tail[i].x && y === snake.tail[i].y) {
+    //     createjs.Ticker.removeEventListener('tick', onStageTick);
+    //     return;
+    //   }
+    // }
 
-      for (let i = 0; i < _snake2.default.tail.length - 1; i++) {
-        _snake2.default.tail[i] = _snake2.default.tail[i + 1];
-      }
-      if (_snake2.default.length >= 1) {
-        _snake2.default.tail[_snake2.default.length - 1] = { x: _snake2.default.x, y: _snake2.default.y };
-      }
+    // if (Math.hypot(x - food.x, y - food.y) < 10) {
+    //   foodEaten();
+    // }
 
-      for (let i = 0; i < _snake2.default.tail.length; i++) {
-        _snake2.default.parts[i].x = _snake2.default.tail[i].x;
-        _snake2.default.parts[i].y = _snake2.default.tail[i].y;
-        _stage2.default.addChild(_snake2.default.parts[i]);
-      }
+    // for (let i = 0; i < snake.tail.length - 1; i++) {
+    //   snake.tail[i] = snake.tail[i + 1];
+    // }
+    // if (snake.length >= 1) {
+    //   snake.tail[snake.length - 1] = {x: snake.x, y: snake.y};
+    // }
 
-      _snake2.default.x += _snake2.default.xspeed * TILE_SIZE;
-      _snake2.default.y += _snake2.default.yspeed * TILE_SIZE;
+    // for (let i = 0; i < snake.tail.length; i++) {
+    //   snake.parts[i].x = snake.tail[i].x;
+    //   snake.parts[i].y = snake.tail[i].y;
+    //   stage.addChild(snake.parts[i]);
+    // }
 
-      _snake2.default.x = _lodash2.default.clamp(_snake2.default.x, 0, _settings.STAGE_WIDTH - TILE_SIZE);
-      _snake2.default.y = _lodash2.default.clamp(_snake2.default.y, 0, _settings.STAGE_HEIGHT - TILE_SIZE);
+    // snake.x += snake.xspeed * TILE_SIZE;
+    // snake.y += snake.yspeed * TILE_SIZE;
 
-      _stage2.default.update();
-    }
+    // snake.x = _.clamp(snake.x, 0, STAGE_WIDTH - TILE_SIZE);
+    // snake.y = _.clamp(snake.y, 0, STAGE_HEIGHT - TILE_SIZE);
+
+    // stage.update();
+
     // createjs.Ticker.framerate = 12;
     // createjs.Ticker.addEventListener('tick', onStageTick);
 
-    function onKeyDown(event) {
-      switch (event.code) {
-        case 'ArrowDown':
-          if (_snake2.default.dir !== 'UP') {
-            _snake2.default.dir = 'DOWN';
-            _snake2.default.yspeed = 1;
-            _snake2.default.xspeed = 0;
-          }
-          break;
-        case 'ArrowUp':
-          if (_snake2.default.dir !== 'DOWN') {
-            _snake2.default.dir = 'UP';
-            _snake2.default.yspeed = -1;
-            _snake2.default.xspeed = 0;
-          }
-          break;
-        case 'ArrowRight':
-          if (_snake2.default.dir !== 'LEFT') {
-            _snake2.default.dir = 'RIGHT';
-            _snake2.default.xspeed = 1;
-            _snake2.default.yspeed = 0;
-          }
-          break;
-        case 'ArrowLeft':
-          if (_snake2.default.dir !== 'RIGHT') {
-            _snake2.default.dir = 'LEFT';
-            _snake2.default.xspeed = -1;
-            _snake2.default.yspeed = 0;
-          }
-          break;
-      }
-    }
+    function onKeyDown(event) {}
 
     function onClick(event) {
       // event.preventDefault();
@@ -55826,20 +55847,24 @@ exports.default = {
 
       return new createjs.Point(x, y);
     }
-
-    // document.addEventListener('click', onClick.bind(this));
-    // document.addEventListener('keydown', onKeyDown.bind(this));
   },
 
   start() {
+    createjs.Ticker.framerate = 12;
     createjs.Ticker.addEventListener('tick', onTickUpdate);
+
+    _snake2.default.start();
   },
 
   end() {
     createjs.removeEventListener('tick', onTickUpdate);
+  },
+
+  onTickUpdate(event) {
+    _stage2.default.update();
   }
 };
-},{"lodash":11,"./settings.js":18,"./stage.js":19,"./food.js":17,"./snake.js":16}],4:[function(require,module,exports) {
+},{"lodash":15,"./settings.js":11,"./stage.js":12,"./food.js":13,"./snake.js":14}],4:[function(require,module,exports) {
 'use strict';
 
 require("latest-createjs");
@@ -55870,7 +55895,7 @@ function Module() {
 module.bundle.Module = Module;
 
 if (!module.bundle.parent && typeof WebSocket !== 'undefined') {
-  var ws = new WebSocket('ws://' + window.location.hostname + ':43943/');
+  var ws = new WebSocket('ws://' + window.location.hostname + ':35701/');
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
 
