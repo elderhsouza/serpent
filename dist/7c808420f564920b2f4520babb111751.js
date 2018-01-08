@@ -36523,7 +36523,7 @@ require('./lib/tweenjs/tweenjs.js')
 require('./lib/soundjs/soundjs.js')
 require('./lib/preloadjs/preloadjs.js')
 
-},{"./lib/easeljs/easeljs.js":7,"./lib/tweenjs/tweenjs.js":8,"./lib/soundjs/soundjs.js":9,"./lib/preloadjs/preloadjs.js":10}],14:[function(require,module,exports) {
+},{"./lib/easeljs/easeljs.js":7,"./lib/tweenjs/tweenjs.js":8,"./lib/soundjs/soundjs.js":9,"./lib/preloadjs/preloadjs.js":10}],13:[function(require,module,exports) {
 'use strict'
 
 exports.byteLength = byteLength
@@ -36639,7 +36639,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],15:[function(require,module,exports) {
+},{}],14:[function(require,module,exports) {
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -36725,7 +36725,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],13:[function(require,module,exports) {
+},{}],15:[function(require,module,exports) {
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
@@ -38525,7 +38525,7 @@ function isnan (val) {
   return val !== val // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":14,"ieee754":15,"isarray":13,"buffer":12}],11:[function(require,module,exports) {
+},{"base64-js":13,"ieee754":14,"isarray":15,"buffer":12}],11:[function(require,module,exports) {
 var global = (1,eval)("this");
 var Buffer = require("buffer").Buffer;
 /**
@@ -55613,7 +55613,70 @@ var Buffer = require("buffer").Buffer;
   }
 }.call(this));
 
-},{"buffer":12}],5:[function(require,module,exports) {
+},{"buffer":12}],18:[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+const TILE_SIZE = 20;
+const STAGE_WIDTH = 600;
+const STAGE_HEIGHT = 400;
+const CANVAS_SELECTOR = 'stage';
+
+exports.TILE_SIZE = TILE_SIZE;
+exports.STAGE_WIDTH = STAGE_WIDTH;
+exports.STAGE_HEIGHT = STAGE_HEIGHT;
+exports.CANVAS_SELECTOR = CANVAS_SELECTOR;
+},{}],19:[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _settings = require("./settings.js");
+
+const stage = new createjs.Stage(_settings.CANVAS_SELECTOR);
+stage.setBounds(0, 0, _settings.STAGE_WIDTH, _settings.STAGE_HEIGHT);
+
+exports.default = stage;
+},{"./settings.js":18}],17:[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _settings = require("./settings.js");
+
+const food = new createjs.Shape();
+
+food.graphics.f('green').drawCircle(_settings.TILE_SIZE >> 1, _settings.TILE_SIZE >> 1, _settings.TILE_SIZE, _settings.TILE_SIZE);
+
+exports.default = food;
+},{"./settings.js":18}],16:[function(require,module,exports) {
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _settings = require("./settings.js");
+
+const snake = new createjs.Shape();
+snake.graphics.f('black').dr(0, 0, _settings.TILE_SIZE, _settings.TILE_SIZE);
+
+snake.xspeed = 0;
+snake.yspeed = 0;
+// snake.dir = 'RIGHT';
+
+snake.start = function () {
+  console.log('snake start');
+};
+
+exports.default = snake;
+},{"./settings.js":18}],5:[function(require,module,exports) {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -55624,117 +55687,107 @@ var _lodash = require("lodash");
 
 var _lodash2 = _interopRequireDefault(_lodash);
 
+var _settings = require("./settings.js");
+
+var _stage = require("./stage.js");
+
+var _stage2 = _interopRequireDefault(_stage);
+
+var _food = require("./food.js");
+
+var _food2 = _interopRequireDefault(_food);
+
+var _snake = require("./snake.js");
+
+var _snake2 = _interopRequireDefault(_snake);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-const tileSize = 20;
-const stageWidth = 600;
-const stageHeight = 400;
 let score = 0;
 
+function onTickUpdate(event) {
+  _stage2.default.update();
+}
+
 exports.default = {
+
   init(canvas) {
-    const stage = new createjs.Stage(canvas);
-    stage.setBounds(0, 0, stageWidth, stageHeight);
 
-    // food
-    const food = new createjs.Shape();
-    food.graphics.f('green').drawCircle(10, 10, tileSize >> 1);
-
-    // snake
-    const snake = new createjs.Shape();
-    snake.x = 20;
-    snake.y = 20;
-    snake.xspeed = 0;
-    snake.yspeed = 0;
-    snake.dir = 'RIGHT';
-
-    snake.tail = [];
-    snake.parts = [];
-    snake.length = 0;
-
-    snake.graphics.f('black').dr(0, 0, tileSize, tileSize);
-    snake.cache(0, 0, tileSize, tileSize);
-
-    // food location
-    const foodLocation = pickFoodLocation();
-    food.x = foodLocation.x;
-    food.y = foodLocation.y;
-
-    stage.addChild(food);
-    stage.addChild(snake);
+    _stage2.default.addChild(_food2.default);
+    _stage2.default.addChild(_snake2.default);
 
     function onStageTick(event) {
-      let x = snake.x + snake.xspeed * tileSize;
-      let y = snake.y + snake.yspeed * tileSize;
+      let x = _snake2.default.x + _snake2.default.xspeed * TILE_SIZE;
+      let y = _snake2.default.y + _snake2.default.yspeed * TILE_SIZE;
 
-      if (x <= 0 || x >= stageWidth || y <= 0 || y >= stageHeight) {
+      if (x <= 0 || x >= _settings.STAGE_WIDTH || y <= 0 || y >= _settings.STAGE_HEIGHT) {
         createjs.Ticker.removeEventListener('tick', onStageTick);
         return;
       }
 
-      for (let i = 0; i < snake.tail.length; i++) {
-        if (x === snake.tail[i].x && y === snake.tail[i].y) {
+      for (let i = 0; i < _snake2.default.tail.length; i++) {
+        if (x === _snake2.default.tail[i].x && y === _snake2.default.tail[i].y) {
           createjs.Ticker.removeEventListener('tick', onStageTick);
           return;
         }
       }
 
-      if (Math.hypot(x - food.x, y - food.y) < 10) {
+      if (Math.hypot(x - _food2.default.x, y - _food2.default.y) < 10) {
         foodEaten();
       }
 
-      for (let i = 0; i < snake.tail.length - 1; i++) {
-        snake.tail[i] = snake.tail[i + 1];
+      for (let i = 0; i < _snake2.default.tail.length - 1; i++) {
+        _snake2.default.tail[i] = _snake2.default.tail[i + 1];
       }
-      if (snake.length >= 1) {
-        snake.tail[snake.length - 1] = { x: snake.x, y: snake.y };
-      }
-
-      for (let i = 0; i < snake.tail.length; i++) {
-        snake.parts[i].x = snake.tail[i].x;
-        snake.parts[i].y = snake.tail[i].y;
-        stage.addChild(snake.parts[i]);
+      if (_snake2.default.length >= 1) {
+        _snake2.default.tail[_snake2.default.length - 1] = { x: _snake2.default.x, y: _snake2.default.y };
       }
 
-      snake.x += snake.xspeed * tileSize;
-      snake.y += snake.yspeed * tileSize;
+      for (let i = 0; i < _snake2.default.tail.length; i++) {
+        _snake2.default.parts[i].x = _snake2.default.tail[i].x;
+        _snake2.default.parts[i].y = _snake2.default.tail[i].y;
+        _stage2.default.addChild(_snake2.default.parts[i]);
+      }
 
-      snake.x = _lodash2.default.clamp(snake.x, 0, stageWidth - tileSize);
-      snake.y = _lodash2.default.clamp(snake.y, 0, stageHeight - tileSize);
+      _snake2.default.x += _snake2.default.xspeed * TILE_SIZE;
+      _snake2.default.y += _snake2.default.yspeed * TILE_SIZE;
 
-      stage.update();
+      _snake2.default.x = _lodash2.default.clamp(_snake2.default.x, 0, _settings.STAGE_WIDTH - TILE_SIZE);
+      _snake2.default.y = _lodash2.default.clamp(_snake2.default.y, 0, _settings.STAGE_HEIGHT - TILE_SIZE);
+
+      _stage2.default.update();
     }
-    createjs.Ticker.framerate = 12;
-    createjs.Ticker.addEventListener('tick', onStageTick);
+    // createjs.Ticker.framerate = 12;
+    // createjs.Ticker.addEventListener('tick', onStageTick);
 
     function onKeyDown(event) {
       switch (event.code) {
         case 'ArrowDown':
-          if (snake.dir !== 'UP') {
-            snake.dir = 'DOWN';
-            snake.yspeed = 1;
-            snake.xspeed = 0;
+          if (_snake2.default.dir !== 'UP') {
+            _snake2.default.dir = 'DOWN';
+            _snake2.default.yspeed = 1;
+            _snake2.default.xspeed = 0;
           }
           break;
         case 'ArrowUp':
-          if (snake.dir !== 'DOWN') {
-            snake.dir = 'UP';
-            snake.yspeed = -1;
-            snake.xspeed = 0;
+          if (_snake2.default.dir !== 'DOWN') {
+            _snake2.default.dir = 'UP';
+            _snake2.default.yspeed = -1;
+            _snake2.default.xspeed = 0;
           }
           break;
         case 'ArrowRight':
-          if (snake.dir !== 'LEFT') {
-            snake.dir = 'RIGHT';
-            snake.xspeed = 1;
-            snake.yspeed = 0;
+          if (_snake2.default.dir !== 'LEFT') {
+            _snake2.default.dir = 'RIGHT';
+            _snake2.default.xspeed = 1;
+            _snake2.default.yspeed = 0;
           }
           break;
         case 'ArrowLeft':
-          if (snake.dir !== 'RIGHT') {
-            snake.dir = 'LEFT';
-            snake.xspeed = -1;
-            snake.yspeed = 0;
+          if (_snake2.default.dir !== 'RIGHT') {
+            _snake2.default.dir = 'LEFT';
+            _snake2.default.xspeed = -1;
+            _snake2.default.yspeed = 0;
           }
           break;
       }
@@ -55742,42 +55795,51 @@ exports.default = {
 
     function onClick(event) {
       // event.preventDefault();
-      // snake.x += tileSize;
+      // snake.x += TILE_SIZE;
       // foodEaten();
       // console.log(snake.x, food.x, Math.hypot(snake.x - food.x, snake.y - food.y));
     }
 
     function foodEaten() {
-      snake.length++;
+      _snake2.default.length++;
+
       score += 10;
 
       const snakePart = new createjs.Shape();
-      snakePart.graphics.f('red').dr(0, 0, tileSize, tileSize);
+      snakePart.graphics.f('red').dr(0, 0, TILE_SIZE, TILE_SIZE);
 
-      snake.parts.push(snakePart);
+      _snake2.default.parts.push(snakePart);
 
       let foodLocation = pickFoodLocation();
-      food.x = foodLocation.x;
-      food.y = foodLocation.y;
+      _food2.default.x = foodLocation.x;
+      _food2.default.y = foodLocation.y;
     }
 
     function pickFoodLocation() {
-      const filledLocations = [{ x: snake.x, y: snake.y }, ...snake.tail];
+      const filledLocations = [{ x: _snake2.default.x, y: _snake2.default.y }, ..._snake2.default.tail];
 
       let x, y;
       do {
-        x = tileSize * _lodash2.default.random(0, stageWidth / tileSize - 1);
-        y = tileSize * _lodash2.default.random(0, stageHeight / tileSize - 1);
+        x = TILE_SIZE * _lodash2.default.random(0, _settings.STAGE_WIDTH / TILE_SIZE - 1);
+        y = TILE_SIZE * _lodash2.default.random(0, _settings.STAGE_HEIGHT / TILE_SIZE - 1);
       } while (filledLocations.findIndex(point => point.x === x && point.y === y) !== -1);
 
-      return { x, y };
+      return new createjs.Point(x, y);
     }
 
-    document.addEventListener('click', onClick.bind(this));
-    document.addEventListener('keydown', onKeyDown.bind(this));
+    // document.addEventListener('click', onClick.bind(this));
+    // document.addEventListener('keydown', onKeyDown.bind(this));
+  },
+
+  start() {
+    createjs.Ticker.addEventListener('tick', onTickUpdate);
+  },
+
+  end() {
+    createjs.removeEventListener('tick', onTickUpdate);
   }
 };
-},{"lodash":11}],4:[function(require,module,exports) {
+},{"lodash":11,"./settings.js":18,"./stage.js":19,"./food.js":17,"./snake.js":16}],4:[function(require,module,exports) {
 'use strict';
 
 require("latest-createjs");
@@ -55788,7 +55850,8 @@ var _game2 = _interopRequireDefault(_game);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_game2.default.init('stage');
+_game2.default.init();
+_game2.default.start();
 },{"latest-createjs":6,"./js/game.js":5}],0:[function(require,module,exports) {
 var global = (1, eval)('this');
 var OldModule = module.bundle.Module;
@@ -55807,7 +55870,7 @@ function Module() {
 module.bundle.Module = Module;
 
 if (!module.bundle.parent && typeof WebSocket !== 'undefined') {
-  var ws = new WebSocket('ws://' + window.location.hostname + ':39538/');
+  var ws = new WebSocket('ws://' + window.location.hostname + ':43943/');
   ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
 

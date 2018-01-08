@@ -3,4 +3,5 @@
 import 'latest-createjs';
 import game from './js/game.js';
 
-game.init('stage');
+game.init();
+game.start();

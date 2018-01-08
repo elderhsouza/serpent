@@ -1,53 +1,30 @@
 'use strict';
 
 import _ from 'lodash';
+import { STAGE_WIDTH, STAGE_HEIGHT } from './settings.js';
 
-const tileSize = 20;
-const stageWidth = 600;
-const stageHeight = 400;
+import stage from './stage.js';
+import food from './food.js';
+import snake from './snake.js';
+
 let score = 0;
 
+function onTickUpdate(event) {
+  stage.update();
+}
+
 export default {
+
   init(canvas) {
-    const stage = new createjs.Stage(canvas);
-    stage.setBounds(0, 0, stageWidth, stageHeight);
-
-    // food
-    const food = new createjs.Shape();
-    food.graphics
-      .f('green')
-      .drawCircle(10, 10, tileSize >> 1);
-
-    // snake
-    const snake = new createjs.Shape();
-    snake.x = 20;
-    snake.y = 20;
-    snake.xspeed = 0;
-    snake.yspeed = 0;
-    snake.dir = 'RIGHT';
-
-    snake.tail = [];
-    snake.parts = [];
-    snake.length = 0;
-
-    snake.graphics
-      .f('black')
-      .dr(0, 0, tileSize, tileSize);
-    snake.cache(0, 0, tileSize, tileSize);
-
-    // food location
-    const foodLocation = pickFoodLocation();
-    food.x = foodLocation.x;
-    food.y = foodLocation.y;
 
     stage.addChild(food);
     stage.addChild(snake);
 
     function onStageTick(event) {
-      let x = snake.x + (snake.xspeed * tileSize);
-      let y = snake.y + (snake.yspeed * tileSize);
+      let x = snake.x + (snake.xspeed * TILE_SIZE);
+      let y = snake.y + (snake.yspeed * TILE_SIZE);
 
-      if (x <= 0 || x >= stageWidth || y <= 0 || y >= stageHeight) {
+      if (x <= 0 || x >= STAGE_WIDTH || y <= 0 || y >= STAGE_HEIGHT) {
         createjs.Ticker.removeEventListener('tick', onStageTick);
         return;
       }
@@ -76,16 +53,16 @@ export default {
         stage.addChild(snake.parts[i]);
       }
 
-      snake.x += snake.xspeed * tileSize;
-      snake.y += snake.yspeed * tileSize;
+      snake.x += snake.xspeed * TILE_SIZE;
+      snake.y += snake.yspeed * TILE_SIZE;
 
-      snake.x = _.clamp(snake.x, 0, stageWidth - tileSize);
-      snake.y = _.clamp(snake.y, 0, stageHeight - tileSize);
+      snake.x = _.clamp(snake.x, 0, STAGE_WIDTH - TILE_SIZE);
+      snake.y = _.clamp(snake.y, 0, STAGE_HEIGHT - TILE_SIZE);
 
       stage.update();
     }
-    createjs.Ticker.framerate = 12;
-    createjs.Ticker.addEventListener('tick', onStageTick);
+    // createjs.Ticker.framerate = 12;
+    // createjs.Ticker.addEventListener('tick', onStageTick);
 
     function onKeyDown(event) {
       switch (event.code) {
@@ -122,19 +99,20 @@ export default {
 
     function onClick(event) {
       // event.preventDefault();
-      // snake.x += tileSize;
+      // snake.x += TILE_SIZE;
       // foodEaten();
       // console.log(snake.x, food.x, Math.hypot(snake.x - food.x, snake.y - food.y));
     }
 
     function foodEaten() {
       snake.length++;
+
       score += 10;
 
       const snakePart = new createjs.Shape();
       snakePart.graphics
         .f('red')
-        .dr(0, 0, tileSize, tileSize);
+        .dr(0, 0, TILE_SIZE, TILE_SIZE);
 
       snake.parts.push(snakePart);
 
@@ -148,14 +126,22 @@ export default {
 
       let x, y;
       do {
-        x = tileSize * _.random(0, stageWidth / tileSize - 1);
-        y = tileSize * _.random(0, stageHeight / tileSize - 1);
+        x = TILE_SIZE * _.random(0, STAGE_WIDTH / TILE_SIZE - 1);
+        y = TILE_SIZE * _.random(0, STAGE_HEIGHT / TILE_SIZE - 1);
       } while (filledLocations.findIndex(point => point.x === x && point.y === y) !== -1);
 
-      return { x, y };
+      return new createjs.Point(x, y);
     }
 
-    document.addEventListener('click', onClick.bind(this));
-    document.addEventListener('keydown', onKeyDown.bind(this));
+    // document.addEventListener('click', onClick.bind(this));
+    // document.addEventListener('keydown', onKeyDown.bind(this));
+  },
+
+  start() {
+    createjs.Ticker.addEventListener('tick', onTickUpdate);
+  },
+
+  end() {
+    createjs.removeEventListener('tick', onTickUpdate);
   }
 }

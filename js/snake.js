@@ -1,22 +1,19 @@
-"use strict";
+'use strict';
 
-export default function snake() {
-  let xspeed = 0;
-  let yspeed = 0;
-  let displayObject;
+import { TILE_SIZE } from './settings.js';
 
-  function create() {
-    displayObject = new createjs.Shape();
-    displayObject.graphics
-      .f('black')
-      .dr(0, 0, 20, 20);
-  }
+const snake = new createjs.Shape();
+snake.graphics
+  .f('black')
+  .dr(0, 0, TILE_SIZE, TILE_SIZE);
 
-  function attach() {
+snake.xspeed = 0;
+snake.yspeed = 0;
+// snake.dir = 'RIGHT';
 
-  }
-
-  return {
-    create: create
-  }
+snake.start = function() {
+  console.log('snake start');
 }
+
+
+export default snake;
