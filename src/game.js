@@ -7,22 +7,18 @@ import stage from './stage.js';
 import food from './food.js';
 import snake from './snake.js';
 
-let score = 0;
+let score = 10;
 
 function onTickUpdate(event) {
   stage.update();
 }
-
+console.log('HIAHIA');
 export default {
 
   init() {
 
-    console.log(stage, snake);
-
     stage.addChild(food);
     stage.addChild(snake);
-
-    createjs.Ticker.framerate = 12;
 
     function onStageTick(event) {
       // let x = snake.x + (snake.xspeed * TILE_SIZE);
@@ -110,7 +106,7 @@ export default {
   },
 
   start() {
-    createjs.Ticker.framerate = 12;
+    createjs.Ticker.framerate = 30;
     createjs.Ticker.addEventListener('tick', onTickUpdate);
 
     snake.start();
