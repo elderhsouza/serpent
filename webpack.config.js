@@ -1,27 +1,40 @@
-const webpack = require('webpack');
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 const config = {
-  context: path.resolve(__dirname, 'src'),
-  entry: './app.js',
+  entry: './src/app.js',
   output: {
+    filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    filename: 'bundle.js'
+    publicPath: '/'
   },
-  module :{
-    rules: [{
-      test: /\.js$/,
-      include: path.resolve(__dirname, 'src'),
-      use: [{
-        loader: 'babel-loader',
-        options: {
-          presets: [
-            ['env', { modules: false }]
-          ]
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /(node_modules|bower_components)/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['babel-preset-env']
+          }
         }
-      }]
-    }]
-  }
+      }
+    ]
+  },
+  devtool: 'inline-source-map',
+  plugins: [
+    new CleanWebpackPlugin(['dist']),
+    new HtmlWebpackPlugin({
+      title: 'Serpent',
+      template: './src/index.template.html'
+    })
+  ],
+  devServer: {
+    contentBase: './dist'
+  },
+  target: 'web'
 }
 
 module.exports = config;

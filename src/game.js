@@ -12,10 +12,10 @@ let score = 10;
 function onTickUpdate(event) {
   stage.update();
 }
-console.log('HIAHIA');
 export default {
 
   init() {
+    console.log('game-init', stage, food, snake);
 
     stage.addChild(food);
     stage.addChild(snake);
@@ -61,8 +61,6 @@ export default {
 
       // stage.update();
     }
-    // createjs.Ticker.framerate = 12;
-    // createjs.Ticker.addEventListener('tick', onStageTick);
 
     function onKeyDown(event) {
 
@@ -106,7 +104,9 @@ export default {
   },
 
   start() {
-    createjs.Ticker.framerate = 30;
+    console.log('game-start');
+
+    createjs.Ticker.framerate = 12;
     createjs.Ticker.addEventListener('tick', onTickUpdate);
 
     snake.start();

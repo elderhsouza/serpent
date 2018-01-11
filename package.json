@@ -4,7 +4,8 @@
   "description": "HTML5 Snake Game",
   "main": "dist/index.js",
   "scripts": {
-    "start": "yarn webpack-dev-server --inline",
+    "start": "yarn webpack-dev-server --open",
+    "watch": "yarn webpack -w",
     "build": "yarn webpack -p"
   },
   "repository": {
@@ -21,10 +22,13 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
+    "clean-webpack-plugin": "^0.1.17",
+    "html-webpack-plugin": "^2.30.1",
     "latest-createjs": "^1.0.24",
     "lodash": "^4.17.4",
     "parcel-bundler": "^1.4.1",
     "webpack": "^3.10.0",
-    "webpack-dev-server": "^2.10.0"
+    "webpack-dev-server": "^2.10.1",
+    "webpack-node-externals": "^1.6.0"
   }
 }
